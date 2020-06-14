@@ -1,7 +1,7 @@
 import requests
 from multiprocessing import Pool
 from time import sleep
-from translate import eng as lang #choosing lang
+from translate import russian as lang #choosing lang
 
 good_proxy=[]
 

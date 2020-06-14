@@ -1,7 +1,7 @@
 import requests
 from multiprocessing import Pool
 from time import sleep
-
+from translate import eng as lang #choosing lang
 
 good_proxy=[]
 
@@ -30,9 +30,9 @@ def check_proxy(proxy):
 	try:
 		s.get('https://duckduckgo.com', headers=headers, proxies=proxies)
 		good_proxy.append(proxy)
-		print(proxy+' is good')
+		print(proxy+lang['good'])
 	except requests.exceptions.ConnectionError:
-		print(proxy+' bad')
+		print(proxy+lang['bad'])
 	sleep(1)
 	return good_proxy
 	
@@ -49,16 +49,15 @@ def write_py(namefile, list_):
 			for w in i:
 				f.write(w+', ')
 		f.write(']')
-		
 			
 if __name__=='__main__':
-	input_file=input('Имя входного файла с .txt: ')
-	output_file=input('Имя файла с выходными данными с .txt: ')
-	answer=input('Сохранять как библиотеку питона? y/n: ')
+	input_file=input(lang['input_file'])
+	output_file=input(lang['output_file'])
+	answer=input(lang['answer'])
 	if answer=='y':
-		name=input('Имя с .py: ')
+		name=input(lang['name'])
 	answer=answer.lower()
-	threads=int(input('Потоки число: '))
+	threads=int(input(lang['threads']))
 	
 	proxy_list=read_file(input_file)
 	print(proxy_list)

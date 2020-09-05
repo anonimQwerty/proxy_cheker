@@ -1,11 +1,14 @@
 import requests
 from multiprocessing import Pool
 from time import sleep
-from translate import russian as lang #choosing lang
+from translate import eng as lang #choosing lang
 
 good_proxy=[]
 
 s=requests.Session()
+
+
+
 
 headers={
 'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; rv:61.0) Gecko/20100101 Firefox/61.0',
@@ -21,16 +24,25 @@ def read_file(file):
 			proxy_list.append(i)
 	return proxy_list	
 
+
 def check_proxy(proxy):
 	global good_proxy
+	country='Ukraine' # Карочи ребзя сюды в переменную пишите страну на английском и первую букву делайте заглавную ибо на часах 23:40 и я ебал ещё что-то делать
 	proxies = {
         "http": 'http://'+proxy,
         "https":'https://'+ proxy
     }
 	try:
 		s.get('https://duckduckgo.com', headers=headers, proxies=proxies)
-		good_proxy.append(proxy)
-		print(proxy+lang['good'])
+		r=s.get(f'http://ip-api.com/json/{country}?fields=message,country')
+		r=r.json
+		r=r['country']
+		if r==country:
+			good_proxy.append(proxy)
+			print(f"{proxy} {lang['good']}")
+		else:
+			print(f"{proxy} {lang['good']} but without preffer country")
+
 	except requests.exceptions.ConnectionError:
 		print(proxy+lang['bad'])
 	sleep(1)
@@ -41,6 +53,10 @@ def write_txt(namefile, list_):
 		for i in list_:
 			for w in i:
 				f.write(w+'\n')
+
+
+
+
 				
 def write_py(namefile, list_):
 	with open(namefile, 'w') as f:
@@ -58,6 +74,8 @@ if __name__=='__main__':
 		name=input(lang['name'])
 	answer=answer.lower()
 	threads=int(input(lang['threads']))
+
+
 	
 	proxy_list=read_file(input_file)
 	print(proxy_list)

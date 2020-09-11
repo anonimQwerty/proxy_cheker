@@ -27,21 +27,20 @@ def read_file(file):
 
 def check_proxy(proxy):
 	global good_proxy
-	country='Ukraine' # Карочи ребзя сюды в переменную пишите страну на английском и первую букву делайте заглавную ибо на часах 23:40 и я ебал ещё что-то делать
 	proxies = {
         "http": 'http://'+proxy,
         "https":'https://'+ proxy
     }
 	try:
+		ip=proxy.split(':')
+		ip=ip[0]
 		s.get('https://duckduckgo.com', headers=headers, proxies=proxies)
-		r=s.get(f'http://ip-api.com/json/{country}?fields=message,country')
-		r=r.json
+		r=requests.get(f'http://ip-api.com/json/{ip}?fields=country')
+		r=r.json()
 		r=r['country']
-		if r==country:
-			good_proxy.append(proxy)
-			print(f"{proxy} {lang['good']}")
-		else:
-			print(f"{proxy} {lang['good']} but without preffer country")
+		qpend=proxy+' - '+r
+		good_proxy.append(qpend)
+		print(f"{proxy} {lang['good']}")
 
 	except requests.exceptions.ConnectionError:
 		print(proxy+lang['bad'])
@@ -65,6 +64,10 @@ def write_py(namefile, list_):
 			for w in i:
 				f.write(w+', ')
 		f.write(']')
+
+
+
+
 			
 if __name__=='__main__':
 	input_file=input(lang['input_file'])
@@ -73,6 +76,8 @@ if __name__=='__main__':
 	if answer=='y':
 		name=input(lang['name'])
 	answer=answer.lower()
+	
+		
 	threads=int(input(lang['threads']))
 
 
@@ -81,6 +86,7 @@ if __name__=='__main__':
 	print(proxy_list)
 	p = Pool(threads)
 	a=p.map(check_proxy, proxy_list)
+
 	write_txt(output_file, a)
 	if answer=='y':
 		write_py(name, a)
